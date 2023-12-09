@@ -7,11 +7,12 @@ const DateInput = () => {
     useEffect(() => {
         const today = new Date();
         const year = today.getFullYear();
-        let month = today.getMonth() + 1;
-        let day = today.getDate();
+        let month: number | string = today.getMonth() + 1;
+        let day: number | string = today.getDate();
 
         if (month < 10) {
-            month = `0${month}`;
+            // month = `0${month}`;
+            month = `0${month.toLocaleString}`;
         }
         if (day < 10) {
             day = `0${day}`;
@@ -45,19 +46,27 @@ const DateInput = () => {
     return (
         <>
             <div>
-                <input
-                    type="date"
-                    name="datetop"
-                    id="datetop"
-                    value={topDateValue}
-                    onChange={(e) => handleChange(e, 'top')}
-                />
-                <input type="date"
-                    name="datebottom"
-                    id="datebottom"
-                    value={bottomDateValue}
-                    onChange={(e) => handleChange(e, 'bottom')}
-                />
+                <div className="flex justify-between">
+                    <label htmlFor="datetop">Enter Date</label>
+                    <input
+                        type="date"
+                        name="datetop"
+                        id="datetop"
+                        value={topDateValue}
+                        onChange={(e) => handleChange(e, 'top')}
+                        className="outline-none text-rose-500 cursor-pointer rounded-sm p-1"
+                    />
+                </div>
+                <div className="flex justify-between">
+                    <label htmlFor="datebottom">Today</label>
+                    <input type="date"
+                        name="datebottom"
+                        id="datebottom"
+                        value={bottomDateValue}
+                        onChange={(e) => handleChange(e, 'bottom')}
+                        className="outline-none text-rose-500 cursor-pointer rounded-sm p-1"
+                    />
+                </div>
             </div>
             <button onClick={calculate}>Calculate</button>
             <p>{dateDifference}</p>
