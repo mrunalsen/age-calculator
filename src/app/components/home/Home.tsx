@@ -1,5 +1,5 @@
-import { formatDate, getDate } from '../../shared/getDate';
-import DateInput from '../dateInput/DateInput';
+import Dates from '../Dates';
+// import DateInput from '../dateInput/DateInput';
 const Home = () => {
     return (
         <>
@@ -7,8 +7,8 @@ const Home = () => {
                 <header className='flex justify-center'>
                     <h1>Age</h1>
                 </header>
-                <p>Today : {formatDate(getDate)}</p>
-                <DateInput />
+                {/* <DateInput /> */}
+                <Dates />
             </div>
         </>
     );
