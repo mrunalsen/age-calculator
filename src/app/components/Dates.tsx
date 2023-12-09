@@ -1,46 +1,44 @@
 import { useEffect, useState } from "react";
-import Result from "../modal/Result";
-const DateInput = () => {
+import Results from "./modal/Results";
+
+const Dates = () => {
     const currentDate = new Date();
-    const [topDateValue, setTopDateValue] = useState('');
-    const [bottomDateValue, setBottomDateValue] = useState('');
+    const [topDateValue, setTopDateValue] = useState<Date | null>(null);
+    const [bottomDateValue, setBottomDateValue] = useState<Date | null>(null);
     const [dateDifference, setDateDifference] = useState('');
     const [showModal, setShowModal] = useState(false);
 
-    const topDate = new Date(topDateValue);
-    const bottomDate = new Date(bottomDateValue);
-
     useEffect(() => {
-        setBottomDateValue(currentDate.toISOString().slice(0, 10));
+        const today = new Date();
+        setBottomDateValue(today);
     }, []);
 
-    const handleChange = (e: any, inputType: any) => {
-        const dateValue = e.target.value;
+    const handleChange = (date: Date, inputType: string) => {
         if (inputType === 'top') {
-            setTopDateValue(dateValue);
+            setTopDateValue(date);
         } else {
-            setBottomDateValue(dateValue);
+            setBottomDateValue(date);
         }
     };
-
     const calculate = () => {
-
-        if (!isNaN(topDate.getTime()) && !isNaN(bottomDate.getTime())) {
+        if (topDateValue && bottomDateValue) {
             setShowModal(true);
-            const timeDifference = bottomDate.getTime() - topDate.getTime();
+            const timeDifference = bottomDateValue.getTime() - topDateValue.getTime();
             const daysDifference = timeDifference / (1000 * 3600 * 24);
-            const yearDifference = Math.round(daysDifference / 365);
-            const yearText = yearDifference === 1 ? `${yearDifference} year` : `${yearDifference} years`;
-            const dateText = daysDifference === 1 ? `${daysDifference} day` : `${daysDifference} days`;
+            const yearDifference = daysDifference / 365;
+
             if (daysDifference > 365) {
-                setDateDifference(yearText.toLocaleString());
+                const roundedYears = Math.round(yearDifference);
+                setDateDifference(`${roundedYears} ${roundedYears === 1 ? 'Year' : 'Years'}`);
             } else {
-                setDateDifference(dateText);
+                const roundedDays = Math.round(daysDifference);
+                setDateDifference(`${roundedDays} ${roundedDays === 1 ? 'Day' : 'Days'}`);
             }
         } else {
             setDateDifference(`Invalid Dates`);
         }
     };
+
 
     return (
         <>
@@ -51,33 +49,34 @@ const DateInput = () => {
                         type="date"
                         name="datetop"
                         id="datetop"
-                        value={topDateValue}
-                        onChange={(e) => handleChange(e, 'top')}
+                        value={topDateValue ? topDateValue.toISOString().split('T')[0] : ''}
+                        onChange={(e) => handleChange(new Date(e.target.value), 'top')}
                         className="outline-none text-rose-500 cursor-pointer rounded-sm p-1"
                     />
                 </div>
                 <div className="flex justify-between">
                     <label htmlFor="datebottom">Today</label>
-                    <input type="date"
+                    <input
+                        type="date"
                         name="datebottom"
                         id="datebottom"
-                        value={bottomDateValue}
-                        onChange={(e) => handleChange(e, 'bottom')}
+                        value={bottomDateValue ? bottomDateValue.toISOString().split('T')[0] : ''}
+                        onChange={(e) => handleChange(new Date(e.target.value), 'bottom')}
                         className="outline-none text-rose-500 cursor-pointer rounded-sm p-1"
                     />
                 </div>
             </div>
             <button onClick={calculate}>Calculate</button>
             {showModal && (
-                <Result
+                <Results
                     dateDifference={dateDifference}
-                    topDateValue={topDateValue}
+                    topDateValue={topDateValue ? topDateValue.toISOString().split('T')[0] : ''}
+                    topDate={topDateValue || new Date()}
                     currentDate={currentDate}
-                    topDate={topDate}
                 />
             )}
         </>
     );
 };
 
-export default DateInput;
+export default Dates;
