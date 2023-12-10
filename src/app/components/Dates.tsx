@@ -1,7 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Results from "./modal/Results";
+import { CSSTransition } from 'react-transition-group';
 
 const Dates = () => {
+
+    const [, setShowbutton] = useState(true);
+    const noderef = useRef(null);
+
     const currentDate = new Date();
     const [topDateValue, setTopDateValue] = useState<Date | null>(null);
     const [bottomDateValue, setBottomDateValue] = useState<Date | null>(null);
@@ -22,10 +27,10 @@ const Dates = () => {
     };
     const calculate = () => {
         if (topDateValue && bottomDateValue) {
-            setShowModal(true);
             const timeDifference = bottomDateValue.getTime() - topDateValue.getTime();
             const daysDifference = timeDifference / (1000 * 3600 * 24);
             const yearDifference = daysDifference / 365;
+            setShowModal(true);
 
             if (daysDifference > 365) {
                 const roundedYears = Math.round(yearDifference);
@@ -66,7 +71,36 @@ const Dates = () => {
                     />
                 </div>
             </div>
-            <button onClick={calculate}>Calculate</button>
+            <div className="flex justify-center mt-10">
+                <button
+                    onClick={calculate}
+                    className="text-sm bg-rose-500 text-white rounded p-2"
+                >Calculate</button>
+            </div>
+
+            <CSSTransition in={showModal}
+                timeout={300}
+                mountOnEnter
+                unmountOnExit
+                classNames="alert"
+                onEnter={() => { setShowbutton(false); }}
+                onExited={() => { setShowbutton(true); }}
+
+            >
+                <div
+                    ref={noderef}
+                    className="absolute top-0 bottom-0 left-0 right-0"
+                >
+                    <Results
+                        setShowModal={setShowModal}
+                        dateDifference={dateDifference}
+                        topDateValue={topDateValue ? topDateValue.toISOString().split('T')[0] : ''}
+                        topDate={topDateValue || new Date()}
+                        currentDate={currentDate}
+                    />
+                </div>
+            </CSSTransition>
+            {/*          
             {showModal && (
                 <Results
                     dateDifference={dateDifference}
@@ -74,7 +108,7 @@ const Dates = () => {
                     topDate={topDateValue || new Date()}
                     currentDate={currentDate}
                 />
-            )}
+            )} */}
         </>
     );
 };
